@@ -1,7 +1,6 @@
 package net.jlee.jmxstat;
 
 import java.io.IOException;
-import java.lang.management.MemoryMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,8 @@ import javax.management.remote.JMXServiceURL;
 
 public class Main {
     
+    public static int MAX_RETRY = 5;
+    
     private static class MbeanAttr {
         ObjectName name;
         String attr;
@@ -24,7 +25,7 @@ public class Main {
     }
 
     private static void error(String msg, int err) {
-        System.out.println(msg);
+        System.err.println(msg);
         System.exit(err);
     }
 
@@ -34,6 +35,7 @@ public class Main {
               1);
     }
 
+    // Parse the list of mbean attributes from the command line (arguments 2 and on)   
     private static List<MbeanAttr> parseMbeans(String[] args) throws MalformedObjectNameException, NullPointerException {
         List<MbeanAttr> attrList = new ArrayList<MbeanAttr>();
         for (int i = 1; i < args.length; i++) {
@@ -56,15 +58,22 @@ public class Main {
         return attrList;
     }
     
+    private static MBeanServerConnection connect(String url) throws IOException {
+        JMXServiceURL jmxUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + url + "/jmxrmi");
+        JMXConnector jmxc = JMXConnectorFactory.connect(jmxUrl, null);
+        return jmxc.getMBeanServerConnection();
+    }
+
     public static void main(String[] args) throws Exception {
 
+        boolean retryEnabled = false;
+        int retry = 0;
         int refresh = 5;
-        MBeanServerConnection mbsc = null;
         List<MbeanAttr> attrs = null;
-        MemoryMXBean mbean = null;
         
         // Parse arguments
         if (args.length < 1) { usage(); }
+        String url = args[0];
         try {
             refresh = Integer.parseInt(args[args.length-1]);
         } catch (Exception e) { /* nop */ }
@@ -74,29 +83,44 @@ public class Main {
             error("Invalid mbean attribute list - " + e.toString(), 1);
         }
         
-        // Connect to JMX server
-        try {
-            JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + args[0] + "/jmxrmi");
-            JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-            mbsc = jmxc.getMBeanServerConnection();
-        } catch (IOException e) {
-            error("Error connecting to " + args[0] + ": " + e.toString(), 2);
-        }
- 
-        // Poll mbean attributes
         for (;;) {
-            StringBuilder out = new StringBuilder(); 
-            for (MbeanAttr attr : attrs) {
-                out.append(attr.attr);
-                Object val = mbsc.getAttribute(attr.name, attr.attr);
-                if (attr.subAttr != null && val instanceof CompositeData) {
-                    out.append(".").append(attr.subAttr);
-                    val = ((CompositeData) val).get(attr.subAttr);
+            try {
+                // Connect to JMX server
+                MBeanServerConnection mbsc = connect(url);
+                retryEnabled = true;  // only allow retries after first successful connection
+            
+                for (;;) {
+                    StringBuilder out = new StringBuilder(); 
+
+                    // Read each mbean attribute specified on the command line
+                    for (MbeanAttr attr : attrs) {
+                        out.append(attr.attr);
+                        Object val = mbsc.getAttribute(attr.name, attr.attr);
+
+                        // Read fields from CompositeData attributes if user specified a sub-attribute 
+                        // via dot notation (e.g. java.lang:type=Memory[HeapMemoryUsage.max])
+                        if (attr.subAttr != null && val instanceof CompositeData) {
+                            out.append(".").append(attr.subAttr);
+                            val = ((CompositeData) val).get(attr.subAttr);
+                        }
+                        
+                        out.append("=").append(val).append(" ");
+                    }
+                    
+                    System.out.println(out.toString());
+                    Thread.sleep(refresh * 1000);
+                    retry = 0;  // reset exponential retry back-off after a successful read 
                 }
-                out.append("=").append(val).append(" ");
+            } catch (IOException e) {
+                if (retryEnabled && retry < MAX_RETRY) {
+                    // Exponential retry back-off
+                    int sleep = Math.min(30, (int) Math.pow(2, ++retry));
+                    System.err.println("Communcation error. Retry [" + retry + "/" + MAX_RETRY + "] in " + sleep + "s.\n" + e);
+                    Thread.sleep(sleep * 1000);
+                } else {
+                    error("Error reading from " + url + "\n" + e, 2);
+                }
             }
-            System.out.println(out.toString());
-            Thread.sleep(refresh * 1000);
         }
     }
 }
