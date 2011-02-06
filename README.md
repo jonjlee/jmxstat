@@ -29,12 +29,12 @@ EXAMPLES
     **Precondition**. These examples assume a JMX enabled process is listening
     on localhost:9999. To use jmxstat itself as the monitored process:
     
-        java -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authentice=false -Dcom.sun.management.jmxremote.ssl=false -jar target/jmxstat-0.1-SNAPSHOT.jar localhost:9999
+        java -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authentice=false -Dcom.sun.management.jmxremote.ssl=false -jar jmxstat.jar localhost:9999
 
     Display the number of loaded classes (every 5 seconds, by default):
     
-        java -jar target/jmxstat-0.1-SNAPSHOT.jar localhost:9999 java.lang:type=ClassLoading[LoadedClassCount]
+        java -jar jmxstat.jar localhost:9999 java.lang:type=ClassLoading[LoadedClassCount]
     
     Display heap usage and thread count every 2 seconds:
     
-        java -jar target/jmxstat-0.1-SNAPSHOT.jar localhost:9999 java.lang:type=Memory[HeapMemoryUsage.max,HeapMemoryUsage.committed,HeapMemoryUsage.used] java.lang:type=Threading[ThreadCount] 2
+        java -jar jmxstat.jar localhost:9999 java.lang:type=Memory[HeapMemoryUsage.max,HeapMemoryUsage.committed,HeapMemoryUsage.used] java.lang:type=Threading[ThreadCount] 2
