@@ -2,11 +2,11 @@
 
 NAME
 
-    jmxstat - Poll JMX attributes
+    jmxstat - Poll JMX attributes and more
 
 SYNOPSIS
 
-    java -jar jmxstat.jar host:port [mbean-attributes...] [interval]
+    java -jar jmxstat.jar host:port [mbean-attributes...] [--contention] [--disable-contention] [--performGC] [interval [count]]
 
 DESCRIPTION
 
@@ -15,14 +15,27 @@ DESCRIPTION
     
     jmxstat supports these arguments:
     
-    host:port           Host and port of the JMX enabled process to connect to
+    host:port            Host and port of the JMX enabled process to connect to
     
-    mbean-attributes    Space separated list of mbean names and attributes to
-                        query in the following format:
+    mbean-attributes     Space separated list of mbean names and attributes to
+                         query in the following format:
     
                             mbeanDomain:mbeanKey=mbeanValues,...[mbeanAttribute1[.field],...]
 
-    interval            Pause _interval_ seconds between each query
+    --contention         Render blockedCount and blockedTime for all threads.
+                         blockedCount is the total number of times threads
+			 blocked to enter or reenter a monitor.
+			 blockedTime is the teim elapsed in milliseconds for
+			 all threads blocked to enter or reenter a monitor.
+
+    --disable-contention Disable the blocked time monitoring activated by the 
+                         --contention options
+
+    --performGC          Perform a full GC
+
+    interval             Pause _interval_ seconds between each query
+
+    count                Select count records at interval second intervals
 
 EXAMPLES
 
@@ -35,6 +48,14 @@ EXAMPLES
     
         java -jar jmxstat.jar localhost:9999 java.lang:type=ClassLoading[LoadedClassCount]
     
-    Display heap usage and thread count every 2 seconds:
+    Display heap usage and thread count every 2 seconds 3 times:
     
-        java -jar jmxstat.jar localhost:9999 java.lang:type=Memory[HeapMemoryUsage.max,HeapMemoryUsage.committed,HeapMemoryUsage.used] java.lang:type=Threading[ThreadCount] 2
+        java -jar jmxstat.jar localhost:9999 java.lang:type=Memory[HeapMemoryUsage.max,HeapMemoryUsage.committed,HeapMemoryUsage.used] java.lang:type=Threading[ThreadCount] 2 3
+
+    Display thread count and contention information
+
+        java -jar jmxstat.jar localhost:9999 --contention java.lang:type=Threading[ThreadCount] 2 3
+ 
+    Perform a Full garbage collector
+
+        java -jar jmxstat.jar localhost:9999 --performGC

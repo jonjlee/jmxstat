@@ -30,4 +30,4 @@
    - State "DONE"       from "TODO"       [2011-04-08 ven. 23:24]
    :END:
    Specific option to request a Full GC.
-
+   
