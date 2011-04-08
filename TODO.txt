@@ -1,0 +1,18 @@
+#    -*- mode: org -*-
+#+TITLE: jmxstat to do list
+#+AUTHOR: Benoit Delbosc
+
+* Features
+** TODO Column output like sar/vmstat
+   Use same output as unix \*stat tools with a timestamp
+** TODO Add a jmxstat script
+   just to hide the "java -jar jmxstat.jar"
+** TODO Add count param like sar
+   jmsstat host:port [mbean-attributes...] [ interval [ count ] ]
+** TODO Contention lock monitoring
+   Enable contention monitoring seting ThreadContentionMonitoringEnabled
+   and render thread sum of blokedTime.
+** TODO Fullgc request
+   Specific option to request a Full GC.
+** TODO Reset stats
+   Specific option to reset the peek count
