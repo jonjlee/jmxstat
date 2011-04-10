@@ -85,6 +85,9 @@ public class Main {
         List<MbeanAttr> attrs = null;
 
         public Options(String[] args) {
+	    if (args.length < 2) {
+		usage();
+	    }
             url = args[0];
             // Check for the last 2 args if they are interval/count
             int i = 0;
@@ -288,6 +291,7 @@ public class Main {
                 }
                 if (options.performGC) {
                     performGC(mbsc);
+		    System.out.println(now());
                 }
                 // successful connection
                 if (! options.contention && options.attrs.size() == 0) {
