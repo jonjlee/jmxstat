@@ -1,0 +1,11 @@
+#    -*- mode: org -*-
+#+TITLE: jmxstat changelog
+#+AUTHOR: Benoit Delbosc
+
+* Version 0.2.0 2011-04-10
+** Packaged version with a jmxstat sh script
+** Column output like sar/vmstat
+** Add count param like sar
+** Contention lock monitoring --contention option
+** Perform GC with the --performGC option   
+* Version 0.1 initial version by jonjlee

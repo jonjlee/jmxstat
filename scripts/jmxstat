@@ -1,0 +1,3 @@
+#!/bin/sh
+VERSION=VERSION
+java -jar /usr/local/jmxstat-$VERSION/jmxstat-$VERSION.jar $@
