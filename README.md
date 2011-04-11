@@ -62,11 +62,10 @@ EXAMPLES
 
 INSTALL/DOWNLOAD
 
-    Get the latest package from:   
-        <http://public.dev.nuxeo.com/~ben/jmxstat>
+    Get the latest package from: 
+<http://public.dev.nuxeo.com/~ben/jmxstat>
+ 
     Then install:
-    tar xzvf jmxstat-VERSION.tgz
-    cd jmxstat-VERSION
-    sudo make install
-   
-
+       tar xzvf jmxstat-VERSION.tgz
+       cd jmxstat-VERSION
+       sudo make install
