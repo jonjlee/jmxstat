@@ -2,6 +2,8 @@
 #+TITLE: jmxstat changelog
 #+AUTHOR: Benoit Delbosc
 
+* Version 0.2.1 2011-05-19
+** jmxstat script uses exec, it is easier to get the pid of the jvm.
 * Version 0.2.0 2011-04-10
 ** Packaged version with a jmxstat sh script
 ** Column output like sar/vmstat
