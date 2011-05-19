@@ -3,7 +3,7 @@
 #
 .PHONY: clean pkg install uninstall
 
-VERSION=0.2.1-SNAPSHOT
+VERSION=0.2.1
 JMXSTAT_HOME=$(PREFIX)/jmxstat
 TARGET=gateway:/opt/public-dev/public/ben/jmxstat
 
