@@ -5,7 +5,7 @@
   <groupId>net.jlee</groupId>
   <artifactId>jmxstat</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.1</version>
+  <version>0.2.2-SNAPSHOT</version>
   <name>JMX poller</name>
 
   <dependencies>
