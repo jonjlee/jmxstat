@@ -1,35 +1,19 @@
-# FunkLoad Makefile
 # $Id: $
 #
-.PHONY: clean pkg install uninstall
+.PHONY: clean build install distrib
 
-VERSION=0.2.2-SNAPSHOT
-JMXSTAT_HOME=$(PREFIX)/jmxstat
 TARGET=gateway:/opt/public-dev/public/ben/jmxstat
-
-clean:
-	-find . "(" -name "*~" -or  -name ".#*" -or -name "#*" ")" -print0 | xargs -0 rm -f
-	-rm -rf ./dist/
 
 build:
 	mvn clean package
 
-distrib:
-	-scp ./dist/jmxstat-*.tgz $(TARGET)/
-
-pkg: build
-	-rm -rf ./dist/
-	mkdir -p ./dist/jmxstat-$(VERSION)
-	cp ./Makefile  ./dist/jmxstat-$(VERSION)/
-	cp ./scripts/jmxstat ./dist/jmxstat-$(VERSION)/
-	sed -i "s/VERSION$$/$(VERSION)/g" ./dist/jmxstat-$(VERSION)/jmxstat
-	cp ./target/*.jar ./dist/jmxstat-$(VERSION)/
-	(cd ./dist; tar czvf jmxstat-$(VERSION).tgz jmxstat-$(VERSION)/)
+clean:
+	mvn clean
+	-find . "(" -name "*~" -or  -name ".#*" -or -name "#*" ")" -print0 | xargs -0 rm -f
 
 install:
-	cp -r ../jmxstat-$(VERSION) /usr/local/
-	-rm -f /usr/local/bin/jmxstat
-	cp jmxstat /usr/local/bin/jmxstat
-	chmod +x /usr/local/bin/jmxstat
+	tar -C target -zxvf target/jmxstat-*-dist.tar.gz
+	target/jmxstat-*/install.sh
 
-
+distrib:
+	-scp ./target/jmxstat-*-dist.tar.gz $(TARGET)/
