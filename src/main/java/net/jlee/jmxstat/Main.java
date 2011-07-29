@@ -33,7 +33,7 @@ import javax.management.remote.JMXServiceURL;
 
 public class Main {
 
-    private static final int MAX_RETRY = 5;
+    private static final int MAX_RETRY = 10;
 
     private static final SimpleDateFormat DATE_FORMAT_NOW = new SimpleDateFormat("HH:mm:ss");
     private static final String THREADING_OBJ_NAME = "java.lang:type=Threading";
@@ -173,6 +173,11 @@ public class Main {
             StringBuilder line = new StringBuilder(now());
 
             try {
+                // Reconnect on retry
+                if (mbsc == null) {
+                    mbsc = connect(options.url);
+                }
+                
                 // Read each mbean attribute specified on the command line
                 for (MbeanAttr attr : options.attrs) {
                     Object val = mbsc.getAttribute(attr.name, attr.attr);
@@ -201,9 +206,11 @@ public class Main {
                 retry = 0; // reset exponential retry back-off after a successful read
 
             } catch (IOException e) {
+                // Discard old connection
+                mbsc = null;
                 if (retry < MAX_RETRY) {
                     // Exponential retry back-off
-                    int sleep = Math.min(30, (int) Math.pow(2, ++retry));
+                    int sleep = Math.min(600, (int) Math.pow(2, ++retry));
                     System.err.println("Communcation error. Retry [" + retry + "/" + MAX_RETRY + "] in " + sleep +
                                        "s.\n" + e);
                     Thread.sleep(sleep * 1000);
