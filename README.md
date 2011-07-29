@@ -58,7 +58,7 @@ EXAMPLES
 
         jmxstat localhost:9999 --contention java.lang:type=Threading[ThreadCount] 2 3
  
-    Perform a Full garbage collector:
+    Perform a full garbage collection:
 
         jmxstat localhost:9999 --performGC
 

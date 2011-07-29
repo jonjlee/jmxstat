@@ -133,8 +133,8 @@ public class Main {
         // Invoke garbage collection
         if (options.performGC) {
             try {
+                System.out.println(now() + " invoking gc()");
                 performGC(mbsc);
-                System.out.println(now());
             } catch (Exception e) {
                 error("Error performing GC\n" + e, 3);
             }
@@ -154,8 +154,7 @@ public class Main {
         }
 
         // Print column headers
-        StringBuilder header = new StringBuilder();
-        header.append("time");
+        StringBuilder header = new StringBuilder("time");
         for (MbeanAttr attr : options.attrs) {
             header.append("\t").append(attr.attr);
             if (attr.subAttr != null) {
