@@ -35,6 +35,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
+					<outputDirectory>${project.basedir}/dist</outputDirectory>
 					<descriptors>
 						<descriptor>src/main/assembly/dist.xml</descriptor>
 					</descriptors>

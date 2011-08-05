@@ -64,9 +64,9 @@ EXAMPLES
 
 INSTALL/DOWNLOAD
 
-    Get the latest package from: 
+    Download the latest package: 
 
-        http://public.dev.nuxeo.com/~ben/jmxstat
+        https://raw.github.com/jonjlee/jmxstat/master/dist/jmxstat-0.2.2-SNAPSHOT-dist.tar.gz
  
     Then install:
 
